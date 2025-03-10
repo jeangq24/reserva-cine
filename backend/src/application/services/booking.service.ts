@@ -14,7 +14,9 @@ export class BookingService {
     public save(booking: BookingEntity, transaction: Transaction):Promise<void> {
         return this.repository.save(booking, transaction);
     }
-
+    getByIdBillboard(id: BaseId):Promise<BookingEntity[]> {
+        return this.repository.getByIdBillboard(id)
+    }
     // public getById(id: BaseId): Promise<BookingEntity> {
     //     return this.repository.getById(id)
     // }

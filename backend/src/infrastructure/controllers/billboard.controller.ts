@@ -15,6 +15,8 @@ import { Transaction } from "sequelize";
 import { SeatResponseDto } from "../../application/dtos/seat.dtos";
 import { RoomEntity } from "../../domain/entities/room.entity";
 import { BookingService } from "../../application/services/booking.service";
+import { BookingResponseDto } from "../../application/dtos/booking.dto";
+import { CustomerResponseDto } from "../../application/dtos/customer.dto";
 
 
 export class BillboardController {
@@ -108,6 +110,7 @@ export class BillboardController {
             await this.billboardService.cancel(billboardEntity, transaction);
             const roomEntity = billboardEntity.getRoom();
             await this.updateSeatCancelBillboard(roomEntity, transaction);
+            await this.updateBookingCancelBillboard(billboardEntity.getId(), transaction)
             await transaction.commit();
             res.status(HttpStatus.OK).json({message: "Cartelera cancelada correctamente", data: null})
         } catch (error) {
@@ -136,5 +139,41 @@ export class BillboardController {
         if (promisesUpdateSeat.length > 0) {
             await Promise.all(promisesUpdateSeat);
         }
+    }
+
+    private async updateBookingCancelBillboard (billboardId: BaseId, transaction: Transaction) {
+        console.log("ENTREOOOO")
+        const promisesUpdateBooking = [];
+        const affectedCustomer = []
+        const bookinsBillboardEntities = await this.bookingService.getByIdBillboard(billboardId);
+        console.log("bookinsBillboardEntities", bookinsBillboardEntities)
+        for (let index = 0; index < bookinsBillboardEntities.length; index++) {
+            const bookingEntity = bookinsBillboardEntities[index];
+            const bookingDto = new BookingResponseDto(bookingEntity)
+            const bookingData = {
+                ...bookingDto,
+                status: false
+            }
+            promisesUpdateBooking.push(
+                this.bookingService.save(
+                    ParseEntities.toBookingEntity(
+                        bookingData, 
+                        bookingEntity.getCustomer(),
+                        bookingEntity.getBillboard(),
+                        bookingEntity.getSeats()
+                    ),
+                    transaction
+                )
+            )
+            affectedCustomer.push(new CustomerResponseDto(bookingEntity.getCustomer()))
+        }
+
+        if (promisesUpdateBooking.length > 0) {
+            await Promise.all(promisesUpdateBooking);
+            
+        }
+
+        //IMPRIME EN CONSOLA LOS CONSUMIDORES AFECTADOS
+        console.log("CONSUMIDORES AFECTADO: ", affectedCustomer);
     }
 }
