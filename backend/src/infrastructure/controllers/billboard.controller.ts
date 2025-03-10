@@ -119,6 +119,18 @@ export class BillboardController {
         }
     }
 
+
+    public async getByRangeDateAndCategorie(req: Request, res: Response, next: NextFunction) {
+        try {
+            const requestBody = req.body;
+            const billboardFilter = await this.billboardService.getByFilters(requestBody);
+            res.status(HttpStatus.OK).json({message: "Carteleras obtenido con exito", data: billboardFilter})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
     //TODAS SILLA SON HABILITADAS AL CANCELAR UNA CARTELERA
     private async updateSeatCancelBillboard(room: RoomEntity, transaction: Transaction) {
         const seatsByRoomId = await this.seatService.getByIdRoom(room.getId());

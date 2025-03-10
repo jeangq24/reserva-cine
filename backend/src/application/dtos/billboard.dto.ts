@@ -8,28 +8,29 @@ import {
     Max,
     IsEmail,
     IsBoolean,
-    IsUUID
+    IsUUID,
+    IsArray
 } from "class-validator"; // 
 
 
 export class CreateBillboardDto {
-    
+
     @IsString()
-    public dateBillboard!:string
+    public dateBillboard!: string
     @IsString()
     @IsUUID(4)
-    public roomId!:string 
+    public roomId!: string
     @IsString()
     public nameMovie!: string;
     @IsString()
     public genreMovie!: string;
-    
+
     @IsString()
     @Matches(/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/)
     public starTimeBillboard!: string;
     @IsString()
     @Matches(/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/)
-    public endTimeBillboard!:string
+    public endTimeBillboard!: string
 
     @IsNumber()
     public allowedAgeMovie!: number;
@@ -40,13 +41,24 @@ export class CreateBillboardDto {
 export class DeleteBillboardDto {
     @IsString()
     @IsUUID(4)
-    public id!:string
+    public id!: string
 }
 
 export class CancelBillboardDto {
     @IsString()
     @IsUUID(4)
-    public id!:string
+    public id!: string
+}
+
+export class FilterBillboardDto {
+    @IsString()
+    @Matches(/^(?:\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/)
+    startDate!: string;
+    @IsString()
+    @Matches(/^(?:\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/)
+    endDate!: string;
+    @IsArray()
+    categories!: string[]
 }
 
 export class BillboardResponseDto {

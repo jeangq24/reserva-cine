@@ -8,5 +8,5 @@ export interface BillboardRepository {
     cancel(billboard: BillboardEntity, transaction: Transaction): Promise<void>
     delete(id: BaseId, transaction: Transaction): Promise<void>;
     getById(id: BaseId):Promise<BillboardEntity>;
-    
+    getByFilters(filters: {startDate?: Date; endDate?: Date; categories?: string[];}): Promise<BillboardEntity[]>;
 }

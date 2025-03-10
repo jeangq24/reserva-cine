@@ -25,4 +25,8 @@ export class BillboardService {
     public getById(id: BaseId):Promise<BillboardEntity> {
         return this.repository.getById(id);
     }
+
+    getByFilters(filters: {startDate?: Date; endDate?: Date; categories?: string[];}): Promise<BillboardEntity[]> {
+        return this.repository.getByFilters(filters);
+    }
 }

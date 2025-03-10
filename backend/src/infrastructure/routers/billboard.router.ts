@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ServiceContainer } from "../config/service-container";
 import { validateDto } from "../middleware/validate-dto.middleware";
-import { CancelBillboardDto, CreateBillboardDto, DeleteBillboardDto } from "../../application/dtos/billboard.dto";
+import { CancelBillboardDto, CreateBillboardDto, DeleteBillboardDto, FilterBillboardDto } from "../../application/dtos/billboard.dto";
 
 const billboardRouter = Router();
 const controller = ServiceContainer.billboard;
@@ -29,5 +29,10 @@ billboardRouter.post(
     (req, res, next) => controller.cancelBillboard(req, res, next)
 );
 
+billboardRouter.post(
+    "/billboards/filter",
+    validateDto(FilterBillboardDto),
+    (req, res, next) => controller.getByRangeDateAndCategorie(req, res, next)
+);
 
 export { billboardRouter };

@@ -10,6 +10,7 @@ import { BillboardModel } from "../models/billboard.model";
 import { MovieModel } from "../models/movie.model";
 import { RoomModel } from "../models/room.model";
 import { ParseEntities } from "../../application/services/parse-entity.service";
+import { Op } from "sequelize";
 
 export class SequelizeBillboardRepository implements BillboardRepository {
 
@@ -59,11 +60,28 @@ export class SequelizeBillboardRepository implements BillboardRepository {
 
     }
 
-    
+    public async getByFilters(filters: { startDate?: Date; endDate?: Date; categories?: string[]; }): Promise<BillboardEntity[]> {
+
+        const billboardsEntities = await this.getAll();
+        const normalizedCategories = filters.categories?.map(categorie => ParseEntities.normalizeGenre(categorie)) || [];
+        return billboardsEntities.filter((billboardEntity) => {
+            const billboardDate = new Date(billboardEntity.getDateBillboard().value);
+            const billboardGenre = ParseEntities.normalizeGenre(billboardEntity.getMovie().getGenreMovie());
+            const isDateInRange = !filters.startDate || !filters.endDate
+                ? true
+                : billboardDate > new Date(filters.startDate) && billboardDate <= new Date(filters.endDate);
+            const matchesCategory = !normalizedCategories.length
+                ? true
+                : normalizedCategories.includes(billboardGenre);
+
+            return isDateInRange && matchesCategory;
+        });
+    }
+
     public async save(billboard: BillboardEntity, transaction: Transaction): Promise<void> {
         const billboardDto = new BillboardResponseDto(billboard);
         const dateBillboard = new Date(billboardDto.dateBillboard)
-        await BillboardModel.upsert({ ...billboardDto, dateBillboard }, {transaction});
+        await BillboardModel.upsert({ ...billboardDto, dateBillboard }, { transaction });
     }
 
 
@@ -71,11 +89,11 @@ export class SequelizeBillboardRepository implements BillboardRepository {
         const billboardDto = new BillboardResponseDto(billboard);
 
         const dateNow = new Date();
-        if(new Date(billboardDto.dateBillboard) < dateNow) {
+        if (new Date(billboardDto.dateBillboard) < dateNow) {
             throw new CustomException("No se puede cancelar funciones de la cartelera con fecha anterior a la actual", ErrorCodes.OUT_RANGE, HttpStatus.BAD_REQUEST);
-            
+
         }
-        await BillboardModel.upsert({ ...billboardDto, status: !billboardDto.status }, {transaction});
+        await BillboardModel.upsert({ ...billboardDto, status: !billboardDto.status }, { transaction });
     }
 
 

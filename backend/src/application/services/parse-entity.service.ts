@@ -96,8 +96,14 @@ export class ParseEntities {
 
     public static parseGenre(genre: string): MovieGenreEnum | undefined {
 
-        const genreEnum: MovieGenreEnum = MovieGenreEnum[genre as keyof typeof MovieGenreEnum];
-        return genreEnum
+        const normalizedGenre = ParseEntities.normalizeGenre(genre);
+        return Object.values(MovieGenreEnum).find(
+            (g) => ParseEntities.normalizeGenre(g) === normalizedGenre
+        );
     }
+
+    public static normalizeGenre (genre: string): string {
+        return genre.replace(/[\s_-]/g, '').toUpperCase();
+    };
 
 }
