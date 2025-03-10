@@ -14,4 +14,9 @@ bookingRouter.post(
     (req, res, next) => controller.create(req, res, next)
 );
 
+bookingRouter.get(
+    "/bookings",
+    (req, res, next) => controller.getAll(req, res, next)
+);
+
 export { bookingRouter };

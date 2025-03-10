@@ -18,6 +18,18 @@ import { SeatEntity } from "../../domain/entities/seat.entity";
 export class BookingController {
     constructor(private readonly bookinService: BookingService, private readonly seatService: SeatService, private readonly billboardService: BillboardService, private readonly customerService: CustomerService, private readonly roomService: RoomService) { }
 
+
+    //OBTENEMOS TODAS LAS RESERVAS CON SU RELACIONES DE CARTELERA, ASIENTOS Y CONSUMIDORES
+    public async getAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const bookingsEntities = await this.bookinService.getAll();
+            res.status(HttpStatus.OK).json({ message: "Reservas obtenidas correctamente.", data: bookingsEntities })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
     public async create(req: Request, res: Response, next: NextFunction) {
         const transaction = await database.getSequelizeInstance().transaction();
         try {
@@ -41,7 +53,7 @@ export class BookingController {
             const customerEntity = ParseEntities.toCustomerEntity(customerData);
             await this.customerService.save(customerEntity, transaction);
             const seatEntities = await this.updateBookingSeats(requestBody.seats, transaction);
-            console.log("seatEntitiesssss",seatEntities)
+            console.log("seatEntitiesssss", seatEntities)
             const bookingData = {
                 id: IdGenerator.generate(),
                 status: true,
@@ -65,7 +77,7 @@ export class BookingController {
             const seatEntity = await this.seatService.getById(new BaseId(seatId))
             const seatDto = new SeatResponseDto(seatEntity)
             const roomEntity = await this.roomService.getById(new BaseId(seatDto.roomId));
-            
+
             if (!roomEntity) {
                 throw new CustomException("No se encontro la sala en la base de datos", ErrorCodes.RECORD_NOT_FOUND, HttpStatus.NOT_FOUND)
             }
@@ -78,19 +90,19 @@ export class BookingController {
                 ParseEntities.toSeatEntity(newSeatData, roomEntity),
                 transaction
             );
-            
+
             const SeatUpdate = await this.seatService.getById(new BaseId(seatId))
             Seats.push(SeatUpdate)
 
         }
 
 
-       
+
         if (!Seats.length) {
             throw new CustomException("No se encontraron sillas para la reserva.", ErrorCodes.CONFLICT, HttpStatus.CONFLICT)
         }
 
-       return Seats 
+        return Seats
 
     }
 }

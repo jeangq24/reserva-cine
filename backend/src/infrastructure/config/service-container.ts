@@ -7,7 +7,7 @@ import { SeatService } from "../../application/services/seat.service";
 import { BillboardController } from "../controllers/billboard.controller";
 import { BookingController } from "../controllers/booking.controller";
 import { RoomController } from "../controllers/room.controller";
-import { SequelizeBookingRepositorio } from "../repositories/sequelize-booking.repository";
+import { SequelizeBookingRepository } from "../repositories/sequelize-booking.repository";
 import { SequelizeCustomerRepository } from "../repositories/sequelize-customer.repository";
 import { SequelizeMovieRepository } from "../repositories/sequelize-movie.repository";
 import { SequelizeRoomRepository } from "../repositories/sequelize-room.repository";
@@ -21,7 +21,7 @@ const repositoryRoom = new SequelizeRoomRepository();
 const respositorySeat = new SequelizeSeatRepository();
 const repositoryBillboard = new SequelizeBillboardRepository();
 const repositoryMovie = new SequelizeMovieRepository();
-const repositoryBooking = new SequelizeBookingRepositorio()
+const repositoryBooking = new SequelizeBookingRepository()
 
 //SERVICIOS 
 const serviceCustomer = new CustomerService(repositoryCustomer);

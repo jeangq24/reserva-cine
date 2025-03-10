@@ -7,9 +7,9 @@ import { BaseId } from "../../domain/values-objects/base.ov";
 export class BookingService {
     constructor (private readonly repository: BookingRepository) {}
 
-    // public getAll():Promise<BookingEntity[]> {
-    //     return this.repository.getAll();
-    // }
+    public getAll():Promise<BookingEntity[]> {
+        return this.repository.getAll();
+    }
 
     public save(booking: BookingEntity, transaction: Transaction):Promise<void> {
         return this.repository.save(booking, transaction);

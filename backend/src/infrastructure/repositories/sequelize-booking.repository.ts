@@ -15,7 +15,7 @@ import { RoomModel } from "../models/room.model";
 import { MovieModel } from "../models/movie.model";
 import { SeatModel } from "../models/seat.model";
 
-export class SequelizeBookingRepositorio implements BookingRepository {
+export class SequelizeBookingRepository implements BookingRepository {
 
     public async save(booking: BookingEntity, transaction: Transaction): Promise<void> {
         const bookingDto = new BookingResponseDto(booking);
@@ -38,74 +38,76 @@ export class SequelizeBookingRepositorio implements BookingRepository {
         }
     }
 
+    public async getAll(): Promise<BookingEntity[]> {
+        const bookingsModels = await BookingModel.findAll();
+        return await Promise.all(bookingsModels.map((bookingModel) => this.mapBookingModelToEntity(bookingModel)));
+    }
+
     public async getByIdBillboard(id: BaseId): Promise<BookingEntity[]> {
         this.validIdCorrect(id.value);
-        const billboardModel = await BillboardModel.findByPk(id.value);
-        
+        const bookingsModels = await BookingModel.findAll({ where: { billboardId: id.value } });
+        return await Promise.all(bookingsModels.map((bookingModel) => this.mapBookingModelToEntity(bookingModel)));
+    }
+
+    private async getBillboardDetails(billboardId: BaseId) {
+        console.log("iddddd", billboardId)
+        const billboardModel = await BillboardModel.findByPk(billboardId.value);
+       
         if (!billboardModel) {
             throw new CustomException(`La cartelera no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
         }
-        
+
         const roomModel = await RoomModel.findByPk(billboardModel.roomId);
-    
         if (!roomModel) {
             throw new CustomException(`La sala no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
         }
 
         const movieModel = await MovieModel.findByPk(billboardModel.movieId);
         if (!movieModel) {
-            throw new CustomException(`La pelicula no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
+            throw new CustomException(`La película no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
         }
-        const bookingsModels = await BookingModel.findAll({
-            where: {
-                billboardId: id.value
-            }
-        })
 
+        const roomEntity = ParseEntities.toRoomEntity(roomModel);
+        const movieEntity = ParseEntities.toMovieEntity(movieModel);
+        const billboardEntity = ParseEntities.toBillboardEntity(billboardModel, roomEntity, movieEntity);
 
-        
-        const bookingEntities = await Promise.all(
-
-            bookingsModels.map(
-
-                async (bookingModel) => {
-
-                    const customerModel = await CustomerModel.findByPk(bookingModel.customerId);
-                    if (!customerModel) {
-                        throw new CustomException(`El consumidor no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND)
-                    }
-                    const customerEntity = ParseEntities.toCustomerEntity(customerModel);
-                    const roomEntity = ParseEntities.toRoomEntity(roomModel);
-                    const movieEntity = ParseEntities.toMovieEntity(movieModel);
-                    const billboardEntity = ParseEntities.toBillboardEntity(billboardModel, roomEntity, movieEntity);
-                    const bookingSeatsModels = await BookingSeatModel.findAll({
-                        where: {
-                            bookingId: bookingModel.id
-                        }
-                    })
-                    
-                    const seatsEntites = await Promise.all(
-
-                        bookingSeatsModels.map(
-
-                            async (bookingSeatModel) => {
-                                const seatModel = await SeatModel.findByPk(bookingSeatModel.seatId);
-                                if (!seatModel) {
-                                    throw new CustomException(`la silla no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND)
-                                }
-                                console.log("seatModelsdsds", seatModel.id)
-                                const roomModel = await RoomModel.findByPk(seatModel.roomId);
-                                const roomEntity = ParseEntities.toRoomEntity(roomModel);
-                                return ParseEntities.toSeatEntity(seatModel, roomEntity)
-                            }));
-
-                    return ParseEntities.toBookingEntity(bookingModel, customerEntity, billboardEntity, seatsEntites)
-                })
-
-
-        )
-        return bookingEntities
+        return billboardEntity;
     }
+
+    private async getCustomerEntity(customerId: BaseId) {
+        const customerModel = await CustomerModel.findByPk(customerId.value);
+        if (!customerModel) {
+            throw new CustomException(`El consumidor no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+        return ParseEntities.toCustomerEntity(customerModel);
+    }
+
+    private async getSeatsEntities(bookingId: BaseId) {
+        const bookingSeatsModels = await BookingSeatModel.findAll({ where: { bookingId: bookingId.value } });
+
+        return await Promise.all(
+            bookingSeatsModels.map(async (bookingSeatModel) => {
+                const seatModel = await SeatModel.findByPk(bookingSeatModel.seatId);
+                if (!seatModel) {
+                    throw new CustomException(`La silla no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
+                }
+
+                const roomModel = await RoomModel.findByPk(seatModel.roomId);
+                const roomEntity = ParseEntities.toRoomEntity(roomModel);
+
+                return ParseEntities.toSeatEntity(seatModel, roomEntity);
+            })
+        );
+    }
+
+    private async mapBookingModelToEntity(bookingModel: any): Promise<BookingEntity> {
+        const billboardEntity = await this.getBillboardDetails(new BaseId(bookingModel.billboardId));
+        const customerEntity = await this.getCustomerEntity(new BaseId(bookingModel.customerId));
+        const seatsEntities = await this.getSeatsEntities(new BaseId(bookingModel.id));
+
+        return ParseEntities.toBookingEntity(bookingModel, customerEntity, billboardEntity, seatsEntities);
+    }
+
 
     private validIdCorrect(id: string) {
         if (typeof id !== "string" || id.length <= 0) {
