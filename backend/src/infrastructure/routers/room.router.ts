@@ -24,6 +24,11 @@ roomRouter.put(
     (req, res, next) => controller.update(req, res, next)
 );
 
+roomRouter.put(
+    "/rooms/seat/:id",
+    (req, res, next) => controller.updateSeat(req, res, next)
+);
+
 roomRouter.delete(
     "/rooms",
     validateDto(DeleteRoomDto),
