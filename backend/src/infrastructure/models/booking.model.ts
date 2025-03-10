@@ -6,7 +6,6 @@ export class BookingModel extends Model {
     public dateBooking!: Date;
     public customerId!:string;
     public billboardId!:string;
-    public seatId!:string;
 
     static initialize(sequelize: Sequelize) {
 

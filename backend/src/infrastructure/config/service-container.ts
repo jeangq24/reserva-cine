@@ -33,7 +33,7 @@ const serviceBooking = new BookingService(repositoryBooking)
 
 //EJECION DE CONTROLADORES
 const controllerRoom = new RoomController(serviceRoom, serviceSeat);
-const controllerBillboard = new BillboardController(serviceBillboard, serviceRoom, serviceMovie, serviceSeat )
+const controllerBillboard = new BillboardController(serviceBillboard, serviceRoom, serviceMovie, serviceSeat, serviceBooking);
 const controllerBooking = new BookingController(serviceBooking, serviceSeat, serviceBillboard, serviceCustomer, serviceRoom)
 
 //CONTENEDOR

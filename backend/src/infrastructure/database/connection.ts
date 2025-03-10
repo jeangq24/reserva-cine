@@ -9,6 +9,7 @@ import { BillboardModel } from '../models/billboard.model';
 import { SeatModel } from '../models/seat.model';
 import { MovieModel } from '../models/movie.model';
 import { RoomModel } from '../models/room.model';
+import { BookingSeatModel } from '../models/booking-seat.model';
 
 class PostgreSQLDatabase {
     private static instance: PostgreSQLDatabase;
@@ -25,6 +26,7 @@ class PostgreSQLDatabase {
        
         CustomerModel.initialize(this.sequelize);
         BookingModel.initialize(this.sequelize);
+        BookingSeatModel.initialize(this.sequelize);
         BillboardModel.initialize(this.sequelize);
         SeatModel.initialize(this.sequelize);
         MovieModel.initialize(this.sequelize);

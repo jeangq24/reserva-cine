@@ -14,10 +14,11 @@ import { SeatService } from "../../application/services/seat.service";
 import { Transaction } from "sequelize";
 import { SeatResponseDto } from "../../application/dtos/seat.dtos";
 import { RoomEntity } from "../../domain/entities/room.entity";
+import { BookingService } from "../../application/services/booking.service";
 
 
 export class BillboardController {
-    constructor(private readonly billboardService: BillboardService, private readonly roomService: RoomService, private readonly movieService: MovieService, private readonly seatService: SeatService) { };
+    constructor(private readonly billboardService: BillboardService, private readonly roomService: RoomService, private readonly movieService: MovieService, private readonly seatService: SeatService, private readonly bookingService: BookingService) { };
 
     //CREA UNA CARTELERA, PELICULA Y SE SINCRONIZA CON LA SALA EXISTENTE
     public async create(req: Request, res: Response, next: NextFunction) {
