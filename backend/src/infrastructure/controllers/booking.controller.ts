@@ -29,7 +29,7 @@ export class BookingController {
         }
     }
 
-
+    //CREAMOS RESERVAS ASOCIADAS A UNA CARTELERA CON UNA O MAS SILLAS
     public async create(req: Request, res: Response, next: NextFunction) {
         const transaction = await database.getSequelizeInstance().transaction();
         try {
@@ -53,7 +53,6 @@ export class BookingController {
             const customerEntity = ParseEntities.toCustomerEntity(customerData);
             await this.customerService.save(customerEntity, transaction);
             const seatEntities = await this.updateBookingSeats(requestBody.seats, transaction);
-            console.log("seatEntitiesssss", seatEntities)
             const bookingData = {
                 id: IdGenerator.generate(),
                 status: true,
@@ -70,6 +69,21 @@ export class BookingController {
     }
 
 
+    //CANCELA UNA RESERVA Y HABILITA LAS SILLAS NUEVAMENTE
+    public async cancel(req: Request, res: Response, next: NextFunction) {
+        const transaction = await database.getSequelizeInstance().transaction();
+        try {
+            const requestBody = req.body;
+            await this.bookinService.cancel(new BaseId(requestBody.id), transaction);
+            await transaction.commit();
+            res.status(HttpStatus.OK).json({message: "Reserva cancelada correctamente.", data: null})
+        } catch (error) {
+            await transaction.rollback();
+            next(error);
+        }
+    }
+
+    //ACTTUALIZAMOS EL ESTADO DE LAS SILLAS QUE PERTENECE A UNA RESERVA
     private async updateBookingSeats(seatsId: string[], transaction: Transaction): Promise<SeatEntity[]> {
         const Seats = [];
         for (let index = 0; index < seatsId.length; index++) {
@@ -95,8 +109,6 @@ export class BookingController {
             Seats.push(SeatUpdate)
 
         }
-
-
 
         if (!Seats.length) {
             throw new CustomException("No se encontraron sillas para la reserva.", ErrorCodes.CONFLICT, HttpStatus.CONFLICT)

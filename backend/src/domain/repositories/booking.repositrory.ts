@@ -6,5 +6,6 @@ export interface BookingRepository {
     getAll(): Promise<BookingEntity[]>;
     save(booking: BookingEntity, transaction: Transaction): Promise<void>;
     getByIdBillboard(id: BaseId):Promise<BookingEntity[]>;
+    cancel(id: BaseId, transaction: Transaction):Promise<void>;
     //delete(id: BaseId): Promise<void>;
 }

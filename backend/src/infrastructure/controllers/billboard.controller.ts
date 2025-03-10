@@ -142,11 +142,10 @@ export class BillboardController {
     }
 
     private async updateBookingCancelBillboard (billboardId: BaseId, transaction: Transaction) {
-        console.log("ENTREOOOO")
+      
         const promisesUpdateBooking = [];
         const affectedCustomer = []
         const bookinsBillboardEntities = await this.bookingService.getByIdBillboard(billboardId);
-        console.log("bookinsBillboardEntities", bookinsBillboardEntities)
         for (let index = 0; index < bookinsBillboardEntities.length; index++) {
             const bookingEntity = bookinsBillboardEntities[index];
             const bookingDto = new BookingResponseDto(bookingEntity)

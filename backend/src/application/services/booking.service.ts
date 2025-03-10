@@ -17,6 +17,10 @@ export class BookingService {
     getByIdBillboard(id: BaseId):Promise<BookingEntity[]> {
         return this.repository.getByIdBillboard(id)
     }
+
+    cancel(id: BaseId, transaction: Transaction):Promise<void> {
+        return this.repository.cancel(id, transaction);
+    }
     // public getById(id: BaseId): Promise<BookingEntity> {
     //     return this.repository.getById(id)
     // }

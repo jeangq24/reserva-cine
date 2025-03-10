@@ -49,10 +49,35 @@ export class SequelizeBookingRepository implements BookingRepository {
         return await Promise.all(bookingsModels.map((bookingModel) => this.mapBookingModelToEntity(bookingModel)));
     }
 
+    public async cancel(id: BaseId, transaction: Transaction): Promise<void> {
+        this.validIdCorrect(id.value);
+
+        const bookingModel = await BookingModel.findByPk(id.value, { transaction });
+        if (!bookingModel) {
+            throw new CustomException(`La reserva no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+        bookingModel.status = false;
+        await bookingModel.save({ transaction });
+
+        const bookingSeatModels = await BookingSeatModel.findAll({
+            where: { bookingId: id.value },
+            transaction
+        });
+
+        for (const bookingSeat of bookingSeatModels) {
+            const seatModel = await SeatModel.findByPk(bookingSeat.seatId, { transaction });
+            if (!seatModel) {
+                throw new CustomException(`La silla no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
+            }
+            seatModel.status = true;
+            await seatModel.save({ transaction });
+        }
+    }
+
+
     private async getBillboardDetails(billboardId: BaseId) {
-        console.log("iddddd", billboardId)
         const billboardModel = await BillboardModel.findByPk(billboardId.value);
-       
+
         if (!billboardModel) {
             throw new CustomException(`La cartelera no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
         }
@@ -114,4 +139,5 @@ export class SequelizeBookingRepository implements BookingRepository {
             throw new CustomException(`Envie un "ID" de registro correcto`, ErrorCodes.INVALID_INPUT, HttpStatus.BAD_REQUEST)
         }
     }
+
 }

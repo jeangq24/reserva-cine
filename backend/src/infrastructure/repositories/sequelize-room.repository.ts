@@ -1,12 +1,11 @@
-import { CreateRoomDto, RoomResponseDto, UpdateRoomDto } from "../../application/dtos/room.dtos";
+import { RoomResponseDto } from "../../application/dtos/room.dtos";
 import { ParseEntities } from "../../application/services/parse-entity.service";
 import { RoomEntity } from "../../domain/entities/room.entity";
 import { CustomException } from "../../domain/exceptions/CustomException";
 import { ErrorCodes } from "../../domain/exceptions/Error.codes";
 import { HttpStatus } from "../../domain/exceptions/HttpStatus";
 import { RoomRepository } from "../../domain/repositories/room.repository";
-import { BaseId, BaseStatus } from "../../domain/values-objects/base.ov";
-import { NameRoom, NumberRoom } from "../../domain/values-objects/room.ov";
+import { BaseId, } from "../../domain/values-objects/base.ov";
 import { RoomModel } from "../models/room.model";
 import { Op, Transaction } from "sequelize";
 

@@ -45,6 +45,10 @@ export class CreateBookingDto {
     public phone!:string
 }
 
+export class CancelBookingDto {
+    @IsString()
+    public id!:string
+}
 
 export class BookingResponseDto {
 
