@@ -1,0 +1,35 @@
+{
+  "name": "reserva-cine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec ts-node src/main.ts",
+    "build": "npx tsc ./src/main.ts --outDir ./dist/ ",
+    "start": "node dist/main.js"
+  },
+  "author": "Jean Garón",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^22.13.9",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.3",
+    "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.11",
+    "@types/sequelize": "^4.28.20",
+    "nodemon": "^3.1.9"
+  }
+}
