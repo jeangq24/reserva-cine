@@ -3,7 +3,7 @@
 
 ```sh
 # Clonar este repositorio
-$ git clone https://github.com/tu_usuario/tu_repositorio.git
+$ git clone https://github.com/jeangq24/reserva-cine.git
 ```
 
 ## Apartado backend
