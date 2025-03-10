@@ -9,4 +9,5 @@ export interface SeatRepository {
     delete(id: BaseId, transaction: Transaction): Promise<void>;
     getById(id: BaseId): Promise<SeatEntity>;
     getByIdRoom(id: BaseId): Promise<SeatEntity[]>
+    countSeats(id: BaseId):Promise<number[]>
 }

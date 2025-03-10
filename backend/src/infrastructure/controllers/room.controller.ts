@@ -12,7 +12,7 @@ import { SeatService } from "../../application/services/seat.service";
 import { database } from "../database/connection";
 import { CustomException } from "../../domain/exceptions/CustomException";
 import { ErrorCodes } from "../../domain/exceptions/Error.codes";
-import { Transaction } from "sequelize";
+import { json, Transaction } from "sequelize";
 import { SeatResponseDto } from "../../application/dtos/seat.dtos";
 import { ParseEntities } from "../../application/services/parse-entity.service";
 
@@ -103,6 +103,17 @@ export class RoomController {
         }
     }
 
+
+    //OBTENER DISPONIBILIDAD DE SILLAS 
+    public async getSeatAvailability(req: Request, res: Response, next: NextFunction) {
+        try {
+            const requestParams = req.params;
+            const [total, enabled, disabled ] = await this.seatService.countSeats(new BaseId(requestParams.id));
+            res.status(HttpStatus.OK).json({message: "Disponibilidad obtenida correctamente", data: {total, enabled, disabled}})
+        } catch (error) {
+            next(error)
+        }
+    }
 
     //CAMBIA EL ESTADO DE UNA SILLA
     public async updateSeat(req: Request, res: Response, next: NextFunction) {

@@ -29,6 +29,11 @@ roomRouter.put(
     (req, res, next) => controller.updateSeat(req, res, next)
 );
 
+roomRouter.get(
+    "/rooms/availability/:id",
+    (req, res, next) => controller.getSeatAvailability(req, res, next)
+);
+
 roomRouter.delete(
     "/rooms",
     validateDto(DeleteRoomDto),

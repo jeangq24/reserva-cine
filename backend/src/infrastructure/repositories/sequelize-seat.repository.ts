@@ -12,6 +12,8 @@ import { NumberSeat, NumberSeatRow } from "../../domain/values-objects/seat-ob";
 import { RoomModel } from "../models/room.model";
 import { SeatModel } from "../models/seat.model";
 import { ParseEntities } from "../../application/services/parse-entity.service";
+import { RoomRepository } from "../../domain/repositories/room.repository";
+import { BillboardModel } from "../models/billboard.model";
 
 export class SequelizeSeatRepository implements SeatRepository {
 
@@ -79,6 +81,22 @@ export class SequelizeSeatRepository implements SeatRepository {
         }
     };
 
+    public async countSeats(id: BaseId): Promise<number[]> {
+        this.validIdCorrect(id.value)
+        
+        const billboardModel = await BillboardModel.findByPk(id.value);
+       
+        if(!billboardModel) {
+            throw new CustomException(`La cartelera no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND)
+        }
+
+        const seats = await SeatModel.findAll({where: { roomId: billboardModel.roomId }})
+
+        const total = seats.length
+        const enabled = seats.filter(seat=>seat.status).length
+        const disabled = seats.filter(seat=>!seat.status).length
+        return [total, enabled , disabled]
+    }
 
     private validIdCorrect(id: string) {
         if (typeof id !== "string" || id.length <= 0) {
