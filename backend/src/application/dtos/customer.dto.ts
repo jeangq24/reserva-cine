@@ -19,7 +19,6 @@ export class CreateCustomerDto {
 
     @IsString()
     @IsNotEmpty()
-    @Matches(/^[1-9]{1}[0-9]{9}$/)
     public documentNumber!: string;
 
     @IsString()
