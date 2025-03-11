@@ -9,12 +9,7 @@ export class DocumentNumberCustomer {
     private static readonly REGEX_EC_DOCUMENT: RegExp = /^[1-9]{1}[0-9]{9}$/;
 
     constructor(value: string) {
-
-        if (this.isValidDocument(value)) {
-            this.value = value
-        } else {
-            throw new CustomException("No es un formato correcto para un numero de identididad Ecuatoriano.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);
-        }
+        this.value = value
     }
 
     private isValidDocument(value: string): boolean {
@@ -39,7 +34,7 @@ export class NameValueCustomer {
         if (this.isValidName(value)) {
             this.value = value
         } else {
-            throw new CustomException("No es formato correcto para un nombre o apellido.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);    
+            throw new CustomException("No es formato correcto para un nombre o apellido.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -93,7 +88,7 @@ export class PhoneCustomer {
 
         } else {
 
-            throw new CustomException("No es formato correcto para un numero de telefono ecuatoriano.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);  
+            throw new CustomException("No es formato correcto para un numero de telefono ecuatoriano.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -117,7 +112,7 @@ export class EmailCustomer {
         if (this.isValidEmail(value)) {
             this.value = value;
         } else {
-            throw new CustomException("No es formato correcto para un correo electronico.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);  
+            throw new CustomException("No es formato correcto para un correo electronico.", ErrorCodes.INCORRECT_FORMAT, HttpStatus.BAD_REQUEST);
         }
     }
 
