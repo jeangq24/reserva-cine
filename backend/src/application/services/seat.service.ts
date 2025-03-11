@@ -6,6 +6,10 @@ import { BaseId } from "../../domain/values-objects/base.ov";
 export class SeatService {
     constructor(private readonly repository: SeatRepository) { }
 
+    public getAll():Promise<SeatEntity[]> {
+        return this.repository.getAll()
+    }
+    
     public create(seat: SeatEntity, transaction: Transaction): Promise<SeatEntity> {
         return this.repository.create(seat, transaction);
     }

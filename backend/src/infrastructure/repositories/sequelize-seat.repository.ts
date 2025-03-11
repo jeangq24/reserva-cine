@@ -17,6 +17,18 @@ import { BillboardModel } from "../models/billboard.model";
 
 export class SequelizeSeatRepository implements SeatRepository {
 
+    public async getAll(): Promise<SeatEntity[]> {
+        const seats = await SeatModel.findAll();
+        return await Promise.all(seats.map(async (seat) => {
+            const room = await RoomModel.findByPk(seat.roomId);
+            if (!room) {
+                throw new CustomException(`La sala no existe en la base de datos.`, ErrorCodes.NOT_FOUND, HttpStatus.NOT_FOUND);
+            }
+            const roomEntity = ParseEntities.toRoomEntity(room);
+            return ParseEntities.toSeatEntity(seat, roomEntity);
+        }));
+    }
+
     public async create(seat: SeatEntity, transaction: Transaction): Promise<SeatEntity> {
         const seatDto = new SeatResponseDto(seat)
         await SeatModel.create({ ...seatDto, roomId: seatDto.roomId }, { transaction })

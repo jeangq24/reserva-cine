@@ -7,6 +7,7 @@ import { SeatService } from "../../application/services/seat.service";
 import { BillboardController } from "../controllers/billboard.controller";
 import { BookingController } from "../controllers/booking.controller";
 import { RoomController } from "../controllers/room.controller";
+import { SeatController } from "../controllers/seat.controller";
 import { SequelizeBookingRepository } from "../repositories/sequelize-booking.repository";
 import { SequelizeCustomerRepository } from "../repositories/sequelize-customer.repository";
 import { SequelizeMovieRepository } from "../repositories/sequelize-movie.repository";
@@ -35,10 +36,11 @@ const serviceBooking = new BookingService(repositoryBooking)
 const controllerRoom = new RoomController(serviceRoom, serviceSeat);
 const controllerBillboard = new BillboardController(serviceBillboard, serviceRoom, serviceMovie, serviceSeat, serviceBooking);
 const controllerBooking = new BookingController(serviceBooking, serviceSeat, serviceBillboard, serviceCustomer, serviceRoom)
-
+const controllerSeat = new SeatController(serviceSeat, serviceRoom)
 //CONTENEDOR
 export const ServiceContainer = {
     room:controllerRoom,
     billboard: controllerBillboard,
-    booking: controllerBooking
+    booking: controllerBooking,
+    seat: controllerSeat
 }

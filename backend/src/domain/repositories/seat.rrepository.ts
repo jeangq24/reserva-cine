@@ -3,7 +3,7 @@ import { SeatEntity } from "../entities/seat.entity";
 import { BaseId } from "../values-objects/base.ov";
 
 export interface SeatRepository {
-    //getAll(): Promise<SeatEntity[]>;
+    getAll(): Promise<SeatEntity[]>;
     create(seat: SeatEntity, transaction: Transaction): Promise<SeatEntity>;
     update(seat: SeatEntity, transaction: Transaction): Promise<void>;
     delete(id: BaseId, transaction: Transaction): Promise<void>;
